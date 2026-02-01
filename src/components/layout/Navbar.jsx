@@ -54,9 +54,11 @@ export default function Navbar() {
                     ) : (
                         <>
                             <Link to="/login" className="text-sm font-medium text-muted hover:text-white transition-colors">Login</Link>
-                            <Button className="bg-primary hover:bg-secondary text-white font-bold italic px-8 py-2 rounded-full shadow-glow-red hover:scale-105 transition-all">
-                                JOIN NOW
-                            </Button>
+                            <Link to="/signup">
+                                <Button className="bg-primary hover:bg-secondary text-white font-bold italic px-8 py-2 rounded-full shadow-glow-red hover:scale-105 transition-all">
+                                    JOIN NOW
+                                </Button>
+                            </Link>
                         </>
                     )}
                 </div>
