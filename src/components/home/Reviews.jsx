@@ -9,6 +9,11 @@ const MOCK_REVIEWS = [
     { id: 3, user_name: "Rahul S.", content: "Good support team, clear communication. Highly recommended.", rating: 4 },
     { id: 4, user_name: "Vikram J.", content: "Access keys received in less than 5 minutes. Amazing!", rating: 5 },
     { id: 5, user_name: "Priya M.", content: "Safe and secure payment. The best OTT provider.", rating: 5 },
+    { id: 6, user_name: "Arjun V.", content: "Been using for 3 months now. No issues at all. Smooth experience.", rating: 5 },
+    { id: 7, user_name: "Deepika P.", content: "Super fast delivery. Got my Prime Video account instantly!", rating: 5 },
+    { id: 8, user_name: "Karan T.", content: "Affordable and reliable. Will definitely renew.", rating: 4 },
+    { id: 9, user_name: "Ananya S.", content: "Great customer service. Helpted me with setup very quickly.", rating: 5 },
+    { id: 10, user_name: "Rohan B.", content: "Finally a trusted source for discounted premium accounts!", rating: 5 },
 ];
 
 export default function Reviews() {
@@ -40,16 +45,19 @@ export default function Reviews() {
                 <div className="w-12 h-1 bg-primary mx-auto mt-4 rounded-full" />
             </div>
 
-            <div className="flex gap-6 overflow-hidden select-none">
-                <motion.div
-                    animate={{ x: [0, -1000] }}
-                    transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                    className="flex gap-6 whitespace-nowrap"
+            <div className="relative flex overflow-hidden group/carousel">
+                {/* Edge Fades for smoother look */}
+                <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-black to-transparent z-10" />
+                <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-black to-transparent z-10" />
+
+                <div
+                    className="flex gap-6 whitespace-nowrap animate-marquee group-hover/carousel:[animation-play-state:paused]"
                 >
-                    {[...reviews, ...reviews].map((review, i) => (
+                    {/* Render twice for seamless loop */}
+                    {[...reviews, ...reviews, ...reviews, ...reviews].map((review, i) => (
                         <div
                             key={i}
-                            className="w-[300px] flex-shrink-0 bg-surface/50 backdrop-blur-md border border-white/10 p-6 rounded-2xl hover:border-primary/50 transition-colors group"
+                            className="w-[350px] flex-shrink-0 bg-surface/50 backdrop-blur-md border border-white/10 p-6 rounded-2xl hover:border-primary/50 transition-colors group"
                         >
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex gap-0.5">
@@ -63,14 +71,14 @@ export default function Reviews() {
                                 "{review.content}"
                             </p>
                             <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
-                                    <span className="text-[10px] font-black italic text-primary">{review.user_name[0]}</span>
+                                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
+                                    <span className="text-xs font-black italic text-primary">{review.user_name[0]}</span>
                                 </div>
                                 <span className="text-xs font-bold text-white uppercase tracking-widest">{review.user_name}</span>
                             </div>
                         </div>
                     ))}
-                </motion.div>
+                </div>
             </div>
         </section>
     );
