@@ -14,6 +14,7 @@ export default function AppsManager() {
 
     // New Plan Form
     const [newPlan, setNewPlan] = useState({ name: '', price: '', details: '' });
+    const [editingApp, setEditingApp] = useState(null);
 
     useEffect(() => {
         fetchApps();
@@ -32,6 +33,16 @@ export default function AppsManager() {
         if (!newApp.name) return;
         await supabase.from('ott_apps').insert(newApp);
         setNewApp({ name: '', description: '', logo_url: '' });
+        setRefresh(r => r + 1);
+    };
+
+    const handleUpdateApp = async (id) => {
+        await supabase.from('ott_apps').update({
+            name: editingApp.name,
+            logo_url: editingApp.logo_url,
+            description: editingApp.description
+        }).eq('id', id);
+        setEditingApp(null);
         setRefresh(r => r + 1);
     };
 
@@ -75,7 +86,7 @@ export default function AppsManager() {
                         onChange={e => setNewApp({ ...newApp, logo_url: e.target.value })}
                     />
                     <Input
-                        placeholder="Description"
+                        placeholder="Description (e.g. ID & PASS)"
                         value={newApp.description}
                         onChange={e => setNewApp({ ...newApp, description: e.target.value })}
                     />
@@ -93,12 +104,53 @@ export default function AppsManager() {
                             className="p-4 flex items-center justify-between cursor-pointer hover:bg-white/5 transition-colors"
                             onClick={() => setExpandedApp(expandedApp === app.id ? null : app.id)}
                         >
-                            <div className="flex items-center space-x-4">
-                                {app.logo_url && <img src={app.logo_url} alt="" className="h-8 w-8 object-contain" />}
-                                <span className="font-bold text-lg text-white">{app.name}</span>
-                                <span className="text-sm text-muted">{app.plans?.length || 0} plans</span>
-                            </div>
+                            {editingApp?.id === app.id ? (
+                                <div className="flex-1 grid grid-cols-3 gap-2 mr-4" onClick={(e) => e.stopPropagation()}>
+                                    <Input
+                                        value={editingApp.name}
+                                        onChange={e => setEditingApp({ ...editingApp, name: e.target.value })}
+                                        className="h-8 text-xs"
+                                    />
+                                    <Input
+                                        value={editingApp.logo_url}
+                                        onChange={e => setEditingApp({ ...editingApp, logo_url: e.target.value })}
+                                        className="h-8 text-xs"
+                                    />
+                                    <Input
+                                        value={editingApp.description}
+                                        onChange={e => setEditingApp({ ...editingApp, description: e.target.value })}
+                                        className="h-8 text-xs"
+                                        placeholder="Description"
+                                    />
+                                </div>
+                            ) : (
+                                <div className="flex items-center space-x-4">
+                                    {app.logo_url && <img src={app.logo_url} alt="" className="h-8 w-8 object-contain" />}
+                                    <div className="flex flex-col">
+                                        <span className="font-bold text-lg text-white">{app.name}</span>
+                                        <span className="text-[10px] text-primary font-black uppercase tracking-tight">{app.description || 'No Description'}</span>
+                                    </div>
+                                    <span className="text-sm text-muted">{app.plans?.length || 0} plans</span>
+                                </div>
+                            )}
+
                             <div className="flex items-center space-x-2">
+                                {editingApp?.id === app.id ? (
+                                    <Button size="sm" onClick={(e) => { e.stopPropagation(); handleUpdateApp(app.id); }}>
+                                        <Save className="h-4 w-4 mr-1" /> Save
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setEditingApp(app);
+                                        }}
+                                    >
+                                        <Edit2 className="h-4 w-4" />
+                                    </Button>
+                                )}
                                 <Button
                                     variant="ghost"
                                     size="icon"

@@ -70,12 +70,12 @@ export default function Plans() {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-surface/30 inline-block p-4 rounded-full mb-6"
+                    className="bg-surface/30 inline-block p-8 rounded-full mb-6"
                 >
                     {app?.logo_url ? (
-                        <img src={app.logo_url} alt={app.name} className="h-16 w-16 object-contain" />
+                        <img src={app.logo_url} alt={app.name} className="h-32 w-32 object-contain" />
                     ) : (
-                        <span className="text-2xl font-bold text-primary">{app?.name}</span>
+                        <span className="text-4xl font-bold text-primary">{app?.name}</span>
                     )}
                 </motion.div>
 
@@ -95,7 +95,9 @@ export default function Plans() {
                     transition={{ delay: 0.2 }}
                     className="max-w-xl mx-auto p-4 rounded-xl bg-primary/5 border border-primary/20 text-xs sm:text-sm text-muted italic"
                 >
-                    {app?.name.toLowerCase().includes('youtube') ? (
+                    {app?.description ? (
+                        <p>💡 <span className="text-primary font-bold">Delivery Method:</span> {app.description}</p>
+                    ) : app?.name.toLowerCase().includes('youtube') ? (
                         <p>💡 <span className="text-primary font-bold">Important:</span> You will need to provide your Gmail address. You'll receive a family group invitation via email. Simply accept it on your phone to activate premium.</p>
                     ) : app?.name.toLowerCase().includes('netflix') || app?.name.toLowerCase().includes('prime') ? (
                         <p>💡 <span className="text-primary font-bold">Important:</span> After payment, you will receive a secure ID and Password for your private profile.</p>

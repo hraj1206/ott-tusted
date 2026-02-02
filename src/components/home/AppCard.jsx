@@ -28,11 +28,11 @@ export default function AppCard({ app, index }) {
             </div>
 
             {/* Logo/Icon Container */}
-            <div className="relative z-10 w-24 h-24 rounded-full bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+            <div className="relative z-10 w-32 h-32 rounded-full bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                 {app.logo_url ? (
-                    <img src={app.logo_url} alt={app.name} className="w-16 h-16 object-contain" />
+                    <img src={app.logo_url} alt={app.name} className="w-24 h-24 object-contain" />
                 ) : (
-                    <div className="text-2xl font-black italic text-white">{app.name.substring(0, 2)}</div>
+                    <div className="text-3xl font-black italic text-white">{app.name.substring(0, 2)}</div>
                 )}
             </div>
 
@@ -48,11 +48,13 @@ export default function AppCard({ app, index }) {
                 {/* Delivery Method Tag */}
                 <div className="mb-6">
                     <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-widest text-primary">
-                        {app.name.toLowerCase().includes('netflix') || app.name.toLowerCase().includes('prime')
-                            ? 'ID & PASSWORD DELIVERY'
-                            : app.name.toLowerCase().includes('youtube')
-                                ? 'GMAIL INVITE SYSTEM'
-                                : 'DIRECT WHATSAPP ACTIVATION'}
+                        {app.description || (
+                            app.name.toLowerCase().includes('netflix') || app.name.toLowerCase().includes('prime')
+                                ? 'ID & PASSWORD DELIVERY'
+                                : app.name.toLowerCase().includes('youtube')
+                                    ? 'GMAIL INVITE SYSTEM'
+                                    : 'DIRECT WHATSAPP ACTIVATION'
+                        )}
                     </span>
                 </div>
 
