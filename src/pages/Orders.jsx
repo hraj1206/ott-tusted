@@ -3,6 +3,7 @@ import { supabase } from '../utils/supabase';
 import { useAuth } from '../context/AuthContext';
 import { Loader2, Copy, Check, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const CountdownTimer = ({ createdAt }) => {
     const [timeLeft, setTimeLeft] = useState('');
@@ -117,7 +118,7 @@ export default function Orders() {
             {orders.length === 0 ? (
                 <div className="text-center py-20 bg-surface/30 rounded-2xl border border-white/5 backdrop-blur-sm">
                     <p className="text-muted text-lg mb-4">No subscription data found in your vault.</p>
-                    <a href="/" className="text-primary hover:underline font-bold uppercase tracking-widest text-sm">Access Catalog</a>
+                    <Link to="/?scroll=catalog" className="text-primary hover:underline font-bold uppercase tracking-widest text-sm">Access Catalog</Link>
                 </div>
             ) : (
                 <div className="grid gap-6">

@@ -7,8 +7,10 @@ import AppCard from '../components/home/AppCard';
 import Reviews from '../components/home/Reviews';
 import { Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
 
 export default function Landing() {
+    const location = useLocation();
     const [apps, setApps] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isMobile, setIsMobile] = useState(false);
@@ -27,11 +29,25 @@ export default function Landing() {
             }
         };
         window.addEventListener('mousemove', handleMouseMove);
+
         return () => {
             window.removeEventListener('mousemove', handleMouseMove);
             window.removeEventListener('resize', checkMobile);
         };
     }, []);
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        if (params.get('scroll') === 'catalog' || location.hash === '#catalog') {
+            const timer = setTimeout(() => {
+                const element = document.getElementById('catalog');
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                }
+            }, 500);
+            return () => clearTimeout(timer);
+        }
+    }, [location]);
 
     useEffect(() => {
         fetchApps();
@@ -46,7 +62,6 @@ export default function Landing() {
                 .order('recommended', { ascending: false })
                 .order('created_at', { ascending: true });
 
-            // If no data (dev mode), mock it for visual confirmation
             if (!data || data.length === 0) {
                 setApps([
                     { id: '1', name: 'Netflix', price: 199, logo_url: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg' },
@@ -61,6 +76,13 @@ export default function Landing() {
             console.error('Error fetching apps:', error);
         } finally {
             setLoading(false);
+            // Scroll to catalog if hash or param is present
+            const params = new URLSearchParams(location.search);
+            if (window.location.hash === '#catalog' || params.get('scroll') === 'catalog') {
+                setTimeout(() => {
+                    document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' });
+                }, 200);
+            }
         }
     };
 
@@ -112,7 +134,7 @@ export default function Landing() {
             <Stats />
 
             {/* Catalog Section */}
-            <section className="container mx-auto px-4 py-32">
+            <section id="catalog" className="container mx-auto px-4 py-32">
                 <div className="text-center mb-20">
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
