@@ -83,10 +83,26 @@ export default function Plans() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="text-3xl font-bold text-white"
+                    className="text-3xl font-bold text-white mb-4"
                 >
                     Choose your plan for <span className="text-primary">{app?.name}</span>
                 </motion.h1>
+
+                {/* Specific Instructions */}
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="max-w-xl mx-auto p-4 rounded-xl bg-primary/5 border border-primary/20 text-xs sm:text-sm text-muted italic"
+                >
+                    {app?.name.toLowerCase().includes('youtube') ? (
+                        <p>💡 <span className="text-primary font-bold">Important:</span> You will need to provide your Gmail address. You'll receive a family group invitation via email. Simply accept it on your phone to activate premium.</p>
+                    ) : app?.name.toLowerCase().includes('netflix') || app?.name.toLowerCase().includes('prime') ? (
+                        <p>💡 <span className="text-primary font-bold">Important:</span> After payment, you will receive a secure ID and Password for your private profile.</p>
+                    ) : (
+                        <p>💡 <span className="text-primary font-bold">Important:</span> This app requires direct activation. We will contact you on WhatsApp with the secure access link/code.</p>
+                    )}
+                </motion.div>
             </div>
 
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">

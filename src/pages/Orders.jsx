@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../utils/supabase';
 import { useAuth } from '../context/AuthContext';
-import { Loader2, Copy, Check, Clock } from 'lucide-react';
+import { Loader2, Copy, Check, Clock, MessageSquare } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
@@ -43,10 +43,12 @@ export default function Orders() {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [copiedId, setCopiedId] = useState(null);
+    const [config, setConfig] = useState(null);
 
     useEffect(() => {
         if (user) {
             fetchOrders();
+            fetchPaymentConfig();
 
             const subscription = supabase
                 .channel('user-orders')
@@ -59,6 +61,11 @@ export default function Orders() {
             return () => subscription.unsubscribe();
         }
     }, [user]);
+
+    const fetchPaymentConfig = async () => {
+        const { data } = await supabase.from('payment_config').select('*').maybeSingle();
+        setConfig(data);
+    };
 
     const fetchOrders = async () => {
         try {
@@ -147,6 +154,18 @@ export default function Orders() {
                                     <p className="text-muted text-xs font-mono uppercase tracking-widest">ORDER #{order.id.slice(0, 8)}</p>
                                     {order.status === 'pending' && <CountdownTimer createdAt={order.created_at} />}
                                 </div>
+                                {order.status === 'pending' && (
+                                    <button
+                                        onClick={() => {
+                                            const message = `*New Order Placed*\n\nApp: ${order.app?.name}\nPlan: ${order.plan?.name}\nOrder ID: ${order.id}\n\nEmail: ${user.email}\nPhone: ${user.user_metadata?.phone || 'N/A'}\n\nI have uploaded my payment proof. Please verify.`;
+                                            const waNumber = config?.whatsapp_number ? config.whatsapp_number.replace(/\D/g, '') : '9113693441';
+                                            window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`, '_blank');
+                                        }}
+                                        className="mt-4 flex items-center gap-2 bg-green-500/10 hover:bg-green-500/20 text-green-500 border border-green-500/20 px-4 py-2 rounded-xl text-xs font-bold transition-all"
+                                    >
+                                        <MessageSquare size={14} /> SEND TO WHATSAPP
+                                    </button>
+                                )}
                             </div>
 
                             {(order.status === 'accepted' || order.status === 'confirmed') ? (

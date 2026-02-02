@@ -58,12 +58,11 @@ export default function Payment() {
             // 1. Upload Proof
             const fileExt = file.name.split('.').pop();
             const fileName = `${user.id}/${Date.now()}.${fileExt}`;
-            const { error: uploadError, data: uploadData } = await supabase.storage
+            const { error: uploadError } = await supabase.storage
                 .from('payment_proofs')
                 .upload(fileName, file);
 
             if (uploadError) {
-                console.error("Upload error details:", uploadError);
                 throw new Error(`Upload failed: ${uploadError.message}`);
             }
 
@@ -82,17 +81,22 @@ export default function Payment() {
             if (orderError) throw orderError;
 
             // 3. WhatsApp Redirect
-            // Construct message
             const message = `*New Order Placed*\n\nName: ${formData.fullName}\nApp: ${state.app.name}\nPlan: ${state.plan.name} (Rs. ${state.plan.price})\nEmail: ${formData.email}\nPhone: ${formData.phone}\n\nPayment Proof uploaded.`;
             const encodedMessage = encodeURIComponent(message);
-            // Sanitize WhatsApp number (remove +, spaces, etc)
             const waNumber = config?.whatsapp_number ? config.whatsapp_number.replace(/\D/g, '') : '919876543210';
+            const whatsappUrl = `https://wa.me/${waNumber}?text=${encodedMessage}`;
 
-            window.open(`https://wa.me/${waNumber}?text=${encodedMessage}`, '_blank');
+            // Try to open WhatsApp
+            const newWindow = window.open(whatsappUrl, '_blank');
 
-            // Redirect to success or home
-            alert("Order placed successfully! We will check your proof and approve it shortly.");
-            navigate('/');
+            if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+                // Popup was blocked, show a message with a manual link
+                alert("Order placed! Your browser blocked the WhatsApp redirect. Please click the button on the next screen to send your order details.");
+            } else {
+                alert("Order placed successfully! Redirecting to WhatsApp...");
+            }
+
+            navigate('/orders');
 
         } catch (error) {
             console.error("Order failed:", error);
@@ -165,12 +169,17 @@ export default function Payment() {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm text-muted mb-1">Email</label>
+                            <label className="block text-sm text-muted mb-1">
+                                {state.app.name.toLowerCase().includes('youtube')
+                                    ? 'Gmail Address for activation'
+                                    : 'Email Address'}
+                            </label>
                             <Input
                                 value={formData.email}
                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                 required
                                 type="email"
+                                placeholder={state.app.name.toLowerCase().includes('youtube') ? 'yourname@gmail.com' : 'email@example.com'}
                             />
                         </div>
                         <div>

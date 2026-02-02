@@ -61,7 +61,7 @@ export default function Reviews() {
                 <motion.div
                     animate={{ x: ["0%", "-50%"] }}
                     transition={{
-                        duration: 80,
+                        duration: 120,
                         repeat: Infinity,
                         ease: "linear",
                     }}

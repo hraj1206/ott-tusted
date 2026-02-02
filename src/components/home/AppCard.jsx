@@ -45,6 +45,17 @@ export default function AppCard({ app, index }) {
                     PREMIUM
                 </h4>
 
+                {/* Delivery Method Tag */}
+                <div className="mb-6">
+                    <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-widest text-primary">
+                        {app.name.toLowerCase().includes('netflix') || app.name.toLowerCase().includes('prime')
+                            ? 'ID & PASSWORD DELIVERY'
+                            : app.name.toLowerCase().includes('youtube')
+                                ? 'GMAIL INVITE SYSTEM'
+                                : 'DIRECT WHATSAPP ACTIVATION'}
+                    </span>
+                </div>
+
                 <div className="text-[10px] font-bold text-muted uppercase tracking-[0.2em] mb-8">
                     Starting at ₹{app.price || '99'}
                 </div>
