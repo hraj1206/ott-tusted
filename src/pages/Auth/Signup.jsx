@@ -19,7 +19,7 @@ export default function Signup() {
         password: '',
     });
     const [error, setError] = useState(null);
-    const { user, profile, isVerified } = useAuth();
+    const { user, profile, isVerified, refreshProfile } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || '/';
@@ -112,6 +112,9 @@ export default function Signup() {
 
             const result = await response.json();
             if (!response.ok) throw new Error(result.error || 'Verification failed');
+
+            // Force AuthContext to update verification status before navigating
+            await refreshProfile();
 
             navigate(from, { replace: true });
         } catch (err) {

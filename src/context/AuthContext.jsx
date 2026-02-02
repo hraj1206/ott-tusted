@@ -74,12 +74,13 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // Strictly trust database profile for security-sensitive roles and verification
     const isAdmin = profile?.role === 'admin';
     const isVerified = profile?.is_verified === true || isAdmin;
 
+    const refreshProfile = () => user && fetchProfile(user.id);
+
     return (
-        <AuthContext.Provider value={{ user, profile, isAdmin, isVerified, loading }}>
+        <AuthContext.Provider value={{ user, profile, isAdmin, isVerified, loading, refreshProfile }}>
             {!loading && children}
         </AuthContext.Provider>
     );
