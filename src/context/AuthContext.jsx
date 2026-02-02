@@ -20,9 +20,12 @@ export const AuthProvider = ({ children }) => {
 
         // Listen for changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user ?? null);
-            if (session?.user) fetchProfile(session.user.id);
-            else {
+            if (session?.user) {
+                setLoading(true); // Re-activate loading while fetching new profile
+                setUser(session.user);
+                fetchProfile(session.user.id);
+            } else {
+                setUser(null);
                 setProfile(null);
                 setLoading(false);
             }
@@ -71,7 +74,8 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const isAdmin = profile?.role === 'admin';
+    // Optimized admin and verification checks
+    const isAdmin = profile?.role === 'admin' || user?.user_metadata?.role === 'admin';
     const isVerified = profile?.is_verified === true || isAdmin;
 
     return (

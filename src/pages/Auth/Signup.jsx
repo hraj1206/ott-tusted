@@ -30,11 +30,14 @@ export default function Signup() {
             setVerifying(true);
             setFormData(prev => ({ ...prev, email: user.email }));
         }
-        // If user is already verified and at signup, send home
+
+        // If user is verified (or an admin), send them back to where they came from
         if (user && isVerified) {
-            navigate('/');
+            setVerifying(false);
+            // Replace with 'from' to ensure they get to their intended page (like the Vault)
+            navigate(from, { replace: true });
         }
-    }, [user, isVerified, navigate]);
+    }, [user, isVerified, navigate, from]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
