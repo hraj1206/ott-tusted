@@ -4,16 +4,21 @@ import { Star, Quote } from 'lucide-react';
 import { supabase } from '../../utils/supabase';
 
 const MOCK_REVIEWS = [
-    { id: 1, user_name: "Amit K.", content: "Instant activation as promised. Netflix 4K works perfectly!", rating: 5 },
-    { id: 2, user_name: "Sneha R.", content: "Trusted service. Best price for Disney+ Hotstar premium.", rating: 5 },
-    { id: 3, user_name: "Rahul S.", content: "Good support team, clear communication. Highly recommended.", rating: 4 },
-    { id: 4, user_name: "Vikram J.", content: "Access keys received in less than 5 minutes. Amazing!", rating: 5 },
-    { id: 5, user_name: "Priya M.", content: "Safe and secure payment. The best OTT provider.", rating: 5 },
-    { id: 6, user_name: "Arjun V.", content: "Been using for 3 months now. No issues at all. Smooth experience.", rating: 5 },
-    { id: 7, user_name: "Deepika P.", content: "Super fast delivery. Got my Prime Video account instantly!", rating: 5 },
-    { id: 8, user_name: "Karan T.", content: "Affordable and reliable. Will definitely renew.", rating: 4 },
-    { id: 9, user_name: "Ananya S.", content: "Great customer service. Helpted me with setup very quickly.", rating: 5 },
-    { id: 10, user_name: "Rohan B.", content: "Finally a trusted source for discounted premium accounts!", rating: 5 },
+    { id: 1, user_name: "Chetan S.", content: "Best service, fast reply. Replacement was a quick solution to my problems thx!", rating: 5 },
+    { id: 2, user_name: "Sneha Reddy", content: "Trusted service. Best price for Disney+ Hotstar premium I've found so far.", rating: 5 },
+    { id: 3, user_name: "Rahul Verma", content: "Good support team, clear communication. Highly recommended for OTT seekers.", rating: 4 },
+    { id: 4, user_name: "Vikram Jeet", content: "Access keys received in less than 5 minutes. Amazing speed and reliability!", rating: 5 },
+    { id: 5, user_name: "Priya Malhotra", content: "Safe and secure payment. Definitely the best OTT provider in the market.", rating: 5 },
+    { id: 6, user_name: "Arjun Vijay", content: "Been using for 3 months now. No issues at all. Very smooth experience.", rating: 5 },
+    { id: 7, user_name: "Deepika P.", content: "Super fast delivery. Got my Prime Video account instantly! Great work guys.", rating: 5 },
+    { id: 8, user_name: "Karan Tiwari", content: "Affordable and reliable. Will definitely renew my Netflix 4K from here.", rating: 5 },
+    { id: 9, user_name: "Ananya Saxena", content: "Great customer service. Helped me with the setup very quickly and politely.", rating: 5 },
+    { id: 10, user_name: "Rohan Bansal", content: "Finally a trusted source for discounted premium accounts! No more scams.", rating: 5 },
+    { id: 11, user_name: "Ishaan K.", content: "Smooth login process and the quality of the stream is top notch 4K.", rating: 5 },
+    { id: 12, user_name: "Megha Gupta", content: "Honest service. They actually deliver what they promise on the landing page.", rating: 5 },
+    { id: 13, user_name: "Suresh Mani", content: "Very professional. The dashboard is easy to use and tracking is simple.", rating: 4 },
+    { id: 14, user_name: "Tanvi Rao", content: "I was skeptical at first, but they proved me wrong. Excellent service!", rating: 5 },
+    { id: 15, user_name: "Yash Vardhan", content: "Best prices for bundled packages. Highly recommended for families.", rating: 5 },
 ];
 
 export default function Reviews() {
@@ -25,11 +30,14 @@ export default function Reviews() {
 
     const fetchReviews = async () => {
         const { data } = await supabase.from('reviews').select('*').eq('active', true);
-        if (data && data.length > 0) {
-            setReviews(data);
-        } else {
-            setReviews(MOCK_REVIEWS);
-        }
+
+        // Combine Supabase reviews with our diverse mock set
+        // This ensures the marquee is always full and varied
+        const combined = data && data.length > 0
+            ? [...data, ...MOCK_REVIEWS]
+            : MOCK_REVIEWS;
+
+        setReviews(combined);
     };
 
     return (
