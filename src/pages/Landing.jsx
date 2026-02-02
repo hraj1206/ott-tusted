@@ -11,14 +11,26 @@ import { motion } from 'framer-motion';
 export default function Landing() {
     const [apps, setApps] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isMobile, setIsMobile] = useState(false);
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
     useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+
         const handleMouseMove = (e) => {
-            setMousePos({ x: e.clientX, y: e.clientY });
+            if (window.innerWidth >= 768) {
+                setMousePos({ x: e.clientX, y: e.clientY });
+            }
         };
         window.addEventListener('mousemove', handleMouseMove);
-        return () => window.removeEventListener('mousemove', handleMouseMove);
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('resize', checkMobile);
+        };
     }, []);
 
     useEffect(() => {
@@ -58,7 +70,7 @@ export default function Landing() {
             <div className="noise-overlay" />
 
             {/* Ambient Particles */}
-            {[...Array(20)].map((_, i) => (
+            {[...Array(isMobile ? 5 : 20)].map((_, i) => (
                 <motion.div
                     key={i}
                     className="floating-particle"

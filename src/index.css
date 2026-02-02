@@ -343,6 +343,40 @@ body {
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 0, 0, 0.3);
 }
 
+/* Performance Optimizations for Mobile */
+@media (max-width: 768px) {
+  .noise-overlay {
+    animation: none;
+    display: none;
+  }
+
+  .cyber-grid {
+    animation: none;
+    opacity: 0.1;
+    background-size: 60px 60px;
+  }
+
+  .mouse-glow {
+    display: none;
+  }
+
+  .scanline {
+    display: none;
+  }
+
+  .lightning-bolt {
+    display: none;
+  }
+
+  .perspective-card:hover>div {
+    transform: none;
+  }
+
+  .floating-particle {
+    display: none;
+  }
+}
+
 .noise-overlay {
   position: fixed;
   inset: -200%;
