@@ -4,7 +4,9 @@ import { motion } from 'framer-motion';
 import { supabase } from '../../utils/supabase';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { Lock, Mail, User, Phone } from 'lucide-react';
+import { Lock, Mail, User, Phone, Loader2 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { useEffect } from 'react';
 
 export default function Signup() {
     const [loading, setLoading] = useState(false);
@@ -17,7 +19,20 @@ export default function Signup() {
         password: '',
     });
     const [error, setError] = useState(null);
+    const { user, profile, isVerified } = useAuth();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        // If user logged in but not verified, show OTP screen
+        if (user && !isVerified) {
+            setVerifying(true);
+            setFormData(prev => ({ ...prev, email: user.email }));
+        }
+        // If user is already verified and at signup, send home
+        if (user && isVerified) {
+            navigate('/');
+        }
+    }, [user, isVerified, navigate]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -42,16 +57,30 @@ export default function Signup() {
 
             if (signUpError) throw signUpError;
 
+            // Trigger Brevo OTP Email via Vercel Function
+            const response = await fetch('/api/send-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: formData.email })
+            });
+
+            if (!response.ok) {
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    const errData = await response.json();
+                    throw new Error(errData.error || 'Failed to send verification code');
+                } else {
+                    const text = await response.text();
+                    console.error("Non-JSON error response:", text);
+                    throw new Error('API route not found. Please run using "npx vercel dev" for local testing.');
+                }
+            }
+
             // Switch to OTP verification stage
             setVerifying(true);
         } catch (err) {
             console.error("Signup error object:", err);
-            let msg = err.message || "An unexpected error occurred during signup.";
-
-            if (msg.includes("rate limit")) {
-                msg = "Too many attempts. Please check your email inbox or try again in a minute.";
-            }
-            setError(msg);
+            setError(err.message || "An unexpected error occurred during signup.");
         } finally {
             setLoading(false);
         }
@@ -63,14 +92,50 @@ export default function Signup() {
         setError(null);
 
         try {
-            const { error: verifyError } = await supabase.auth.verifyOtp({
-                email: formData.email,
-                token: otp,
-                type: 'signup',
+            // Get current user session from Supabase to pass ID
+            const { data: { user } } = await supabase.auth.getUser();
+
+            const response = await fetch('/api/verify-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: formData.email,
+                    otp: otp,
+                    userId: user?.id
+                })
             });
 
-            if (verifyError) throw verifyError;
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error || 'Verification failed');
+
             navigate('/');
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleResendOtp = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await fetch('/api/send-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: formData.email })
+            });
+
+            if (!response.ok) {
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    const errData = await response.json();
+                    throw new Error(errData.error || 'Failed to resend verification code');
+                } else {
+                    throw new Error('Failed to resend code. Please check your internet or try again later.');
+                }
+            }
+            alert('A new code has been sent to your email.');
         } catch (err) {
             setError(err.message);
         } finally {
@@ -121,13 +186,26 @@ export default function Signup() {
                             VERIFY & ACTIVATE
                         </Button>
 
-                        <button
-                            type="button"
-                            onClick={() => setVerifying(false)}
-                            className="text-xs text-muted hover:text-white transition-colors uppercase tracking-widest font-bold"
-                        >
-                            ← Back to Signup
-                        </button>
+                        <div className="space-y-4">
+                            <button
+                                type="button"
+                                onClick={handleResendOtp}
+                                disabled={loading}
+                                className="text-xs text-primary hover:text-red-400 transition-colors uppercase tracking-widest font-black"
+                            >
+                                Resend Verification Code
+                            </button>
+
+                            <br />
+
+                            <button
+                                type="button"
+                                onClick={() => setVerifying(false)}
+                                className="text-[10px] text-muted hover:text-white transition-colors uppercase tracking-widest font-bold"
+                            >
+                                ← Back to Signup
+                            </button>
+                        </div>
                     </form>
                 </motion.div>
             </div>
