@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { supabase } from '../../utils/supabase';
 import { Button } from '../../components/ui/Button';
@@ -12,6 +12,8 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || '/';
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -25,9 +27,7 @@ export default function Login() {
             });
 
             if (error) throw error;
-            // Force a small delay or check to ensure auth state propogates?
-            // Usually not needed with useAuth listener.
-            navigate('/');
+            navigate(from, { replace: true });
         } catch (err) {
             setError(err.message);
         } finally {

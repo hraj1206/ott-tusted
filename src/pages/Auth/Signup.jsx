@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { supabase } from '../../utils/supabase';
 import { Button } from '../../components/ui/Button';
@@ -21,6 +21,8 @@ export default function Signup() {
     const [error, setError] = useState(null);
     const { user, profile, isVerified } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || '/';
 
     useEffect(() => {
         // If user logged in but not verified, show OTP screen
@@ -108,7 +110,7 @@ export default function Signup() {
             const result = await response.json();
             if (!response.ok) throw new Error(result.error || 'Verification failed');
 
-            navigate('/');
+            navigate(from, { replace: true });
         } catch (err) {
             setError(err.message);
         } finally {
