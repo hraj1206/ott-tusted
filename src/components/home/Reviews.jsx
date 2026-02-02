@@ -45,19 +45,25 @@ export default function Reviews() {
                 <div className="w-12 h-1 bg-primary mx-auto mt-4 rounded-full" />
             </div>
 
-            <div className="relative flex overflow-hidden group/carousel">
+            <div id="reviews-marquee-container" className="relative flex overflow-hidden group/carousel">
                 {/* Edge Fades for smoother look */}
-                <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-black to-transparent z-10" />
-                <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-black to-transparent z-10" />
+                <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-black via-black/50 to-transparent z-10 pointer-events-none" />
+                <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-black via-black/50 to-transparent z-10 pointer-events-none" />
 
-                <div
-                    className="flex gap-6 whitespace-nowrap animate-marquee group-hover/carousel:[animation-play-state:paused]"
+                <motion.div
+                    animate={{ x: ["0%", "-50%"] }}
+                    transition={{
+                        duration: 30,
+                        repeat: Infinity,
+                        ease: "linear",
+                    }}
+                    className="flex gap-6 whitespace-nowrap py-4"
                 >
-                    {/* Render twice for seamless loop */}
-                    {[...reviews, ...reviews, ...reviews, ...reviews].map((review, i) => (
+                    {/* Render many times to ensure even a single review covers the screen width twice */}
+                    {[...reviews, ...reviews, ...reviews, ...reviews, ...reviews, ...reviews, ...reviews, ...reviews].map((review, i) => (
                         <div
                             key={i}
-                            className="w-[350px] flex-shrink-0 bg-surface/50 backdrop-blur-md border border-white/10 p-6 rounded-2xl hover:border-primary/50 transition-colors group"
+                            className="w-[300px] md:w-[350px] flex-shrink-0 bg-surface/50 backdrop-blur-md border border-white/10 p-6 rounded-2xl hover:border-primary/50 transition-colors group"
                         >
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex gap-0.5">
@@ -72,13 +78,13 @@ export default function Reviews() {
                             </p>
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
-                                    <span className="text-xs font-black italic text-primary">{review.user_name[0]}</span>
+                                    <span className="text-xs font-black italic text-primary">{review.user_name ? review.user_name[0] : 'U'}</span>
                                 </div>
-                                <span className="text-xs font-bold text-white uppercase tracking-widest">{review.user_name}</span>
+                                <span className="text-xs font-bold text-white uppercase tracking-widest">{review.user_name || 'Anonymous'}</span>
                             </div>
                         </div>
                     ))}
-                </div>
+                </motion.div>
             </div>
         </section>
     );
