@@ -72,7 +72,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const isAdmin = profile?.role === 'admin';
-    const isVerified = profile?.is_verified === true;
+    const isVerified = profile?.is_verified === true || isAdmin;
 
     return (
         <AuthContext.Provider value={{ user, profile, isAdmin, isVerified, loading }}>
