@@ -74,8 +74,8 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // Optimized admin and verification checks
-    const isAdmin = profile?.role === 'admin' || user?.user_metadata?.role === 'admin';
+    // Strictly trust database profile for security-sensitive roles and verification
+    const isAdmin = profile?.role === 'admin';
     const isVerified = profile?.is_verified === true || isAdmin;
 
     return (

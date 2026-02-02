@@ -6,7 +6,7 @@ import { LogOut, User, Shield, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Navbar() {
-    const { user, isAdmin } = useAuth();
+    const { user, isAdmin, isVerified } = useAuth();
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -37,7 +37,9 @@ export default function Navbar() {
 
                     {user ? (
                         <>
-                            <Link to="/orders" className="text-sm font-medium text-muted hover:text-white transition-colors">My Vault</Link>
+                            {isVerified && (
+                                <Link to="/orders" className="text-sm font-medium text-muted hover:text-white transition-colors">My Vault</Link>
+                            )}
                             {isAdmin && (
                                 <Link to="/admin" className="flex items-center gap-1 text-sm font-bold text-primary hover:text-red-400 transition-colors">
                                     <Shield size={14} /> Admin
@@ -87,13 +89,15 @@ export default function Navbar() {
                     </Link>
                     {user ? (
                         <>
-                            <Link
-                                to="/orders"
-                                className="block text-lg font-medium text-white"
-                                onClick={() => setIsMenuOpen(false)}
-                            >
-                                My Vault
-                            </Link>
+                            {isVerified && (
+                                <Link
+                                    to="/orders"
+                                    className="block text-lg font-medium text-white"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    My Vault
+                                </Link>
+                            )}
                             {isAdmin && (
                                 <Link
                                     to="/admin"
