@@ -85,7 +85,8 @@ export default function Payment() {
             // Construct message
             const message = `*New Order Placed*\n\nName: ${formData.fullName}\nApp: ${state.app.name}\nPlan: ${state.plan.name} (Rs. ${state.plan.price})\nEmail: ${formData.email}\nPhone: ${formData.phone}\n\nPayment Proof uploaded.`;
             const encodedMessage = encodeURIComponent(message);
-            const waNumber = config?.whatsapp_number || '919876543210'; // Fallback
+            // Sanitize WhatsApp number (remove +, spaces, etc)
+            const waNumber = config?.whatsapp_number ? config.whatsapp_number.replace(/\D/g, '') : '919876543210';
 
             window.open(`https://wa.me/${waNumber}?text=${encodedMessage}`, '_blank');
 

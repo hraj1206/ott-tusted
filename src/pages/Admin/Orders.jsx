@@ -7,7 +7,9 @@ export default function Orders() {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [acceptingOrder, setAcceptingOrder] = useState(null);
-    const [creds, setCreds] = useState({ id: '', pass: '' });
+    const [deliveryType, setDeliveryType] = useState('credentials'); // 'credentials' or 'otp'
+    const [creds, setCreds] = useState({ id: '', pass: '', note: 'do not change any thing' });
+    const [otpMessage, setOtpMessage] = useState('Please provide the OTP sent to your WhatsApp/Email to complete the activation.');
 
     useEffect(() => {
         fetchOrders();
@@ -59,13 +61,19 @@ export default function Orders() {
 
         await supabase.from('orders').update(updateData).eq('id', id);
         setAcceptingOrder(null);
-        setCreds({ id: '', pass: '' });
+        setCreds({ id: '', pass: '', note: 'do not change any thing' });
+        setOtpMessage('Please provide the OTP sent to your WhatsApp/Email to complete the activation.');
         fetchOrders();
     };
 
     const handleAccept = () => {
-        const message = `ID: ${creds.id}\nPASS: ${creds.pass}\nNOTE: do not change any thing`;
-        updateStatus(acceptingOrder.id, 'accepted', message);
+        let finalMessage = '';
+        if (deliveryType === 'credentials') {
+            finalMessage = `ID: ${creds.id}\nPASS: ${creds.pass}\nNOTE: ${creds.note}`;
+        } else {
+            finalMessage = `OTP PROTOCOL INITIATED\n\nMESSAGE: ${otpMessage}\n\nPlease contact us on WhatsApp with the code.`;
+        }
+        updateStatus(acceptingOrder.id, 'accepted', finalMessage);
     };
 
     if (loading) return <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />;
@@ -160,31 +168,65 @@ export default function Orders() {
                             Accept <span className="text-primary">Order</span>
                         </h3>
 
+                        <div className="flex bg-black/40 rounded-lg p-1 mb-6 border border-white/5">
+                            <button
+                                onClick={() => setDeliveryType('credentials')}
+                                className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-md transition-all ${deliveryType === 'credentials' ? 'bg-primary text-white' : 'text-muted hover:text-white'}`}
+                            >
+                                ID & Pass
+                            </button>
+                            <button
+                                onClick={() => setDeliveryType('otp')}
+                                className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-md transition-all ${deliveryType === 'otp' ? 'bg-primary text-white' : 'text-muted hover:text-white'}`}
+                            >
+                                OTP Based
+                            </button>
+                        </div>
+
                         <div className="space-y-4 mb-8">
-                            <div>
-                                <label className="block text-[10px] font-bold text-muted uppercase tracking-widest mb-2">OTT ID</label>
-                                <input
-                                    type="text"
-                                    value={creds.id}
-                                    onChange={(e) => setCreds({ ...creds, id: e.target.value })}
-                                    className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-primary outline-none transition-colors"
-                                    placeholder="email@example.com"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-[10px] font-bold text-muted uppercase tracking-widest mb-2">OTT Password</label>
-                                <input
-                                    type="text"
-                                    value={creds.pass}
-                                    onChange={(e) => setCreds({ ...creds, pass: e.target.value })}
-                                    className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-primary outline-none transition-colors"
-                                    placeholder="••••••••"
-                                />
-                            </div>
-                            <div className="p-3 bg-primary/10 border border-primary/20 rounded-lg">
-                                <p className="text-[10px] text-primary font-bold uppercase mb-1 italic">Fixed Note Included:</p>
-                                <p className="text-xs text-white italic">"do not change any thing"</p>
-                            </div>
+                            {deliveryType === 'credentials' ? (
+                                <>
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-muted uppercase tracking-widest mb-2">OTT ID</label>
+                                        <input
+                                            type="text"
+                                            value={creds.id}
+                                            onChange={(e) => setCreds({ ...creds, id: e.target.value })}
+                                            className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-primary outline-none transition-colors"
+                                            placeholder="email@example.com"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-muted uppercase tracking-widest mb-2">OTT Password</label>
+                                        <input
+                                            type="text"
+                                            value={creds.pass}
+                                            onChange={(e) => setCreds({ ...creds, pass: e.target.value })}
+                                            className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-primary outline-none transition-colors"
+                                            placeholder="••••••••"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-muted uppercase tracking-widest mb-2">Note (Optional)</label>
+                                        <textarea
+                                            value={creds.note}
+                                            onChange={(e) => setCreds({ ...creds, note: e.target.value })}
+                                            className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-primary outline-none transition-colors h-20 resize-none text-xs"
+                                        />
+                                    </div>
+                                </>
+                            ) : (
+                                <div>
+                                    <label className="block text-[10px] font-bold text-muted uppercase tracking-widest mb-2">OTP Instruction Message</label>
+                                    <textarea
+                                        value={otpMessage}
+                                        onChange={(e) => setOtpMessage(e.target.value)}
+                                        className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-primary outline-none transition-colors h-32 resize-none text-xs"
+                                        placeholder="Enter instructions for the user..."
+                                    />
+                                    <p className="mt-2 text-[9px] text-muted italic">* Use this for YouTube/Hotstar where you need the user's OTP from their phone/email.</p>
+                                </div>
+                            )}
                         </div>
 
                         <div className="flex gap-3">
@@ -196,10 +238,10 @@ export default function Orders() {
                             </button>
                             <Button
                                 onClick={handleAccept}
-                                disabled={!creds.id || !creds.pass}
+                                disabled={deliveryType === 'credentials' ? (!creds.id || !creds.pass) : !otpMessage}
                                 className="flex-1"
                             >
-                                Deliver Access
+                                {deliveryType === 'credentials' ? 'Deliver Access' : 'Initiate OTP'}
                             </Button>
                         </div>
                     </div>

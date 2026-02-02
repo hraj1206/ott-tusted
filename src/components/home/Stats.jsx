@@ -3,15 +3,15 @@ import { useEffect, useRef } from 'react';
 import { Users, Diamond, Globe, Zap } from 'lucide-react';
 
 const stats = [
-    { icon: Users, value: 54300, suffix: "+", label: "Verified Users", color: "text-purple-500" },
-    { icon: Diamond, value: 99, suffix: "%", label: "Uptime Score", color: "text-blue-500" },
-    { icon: Globe, value: 120, suffix: "+", label: "Global Servers", color: "text-cyan-500" },
-    { icon: Zap, value: 10, suffix: "m", label: "Support Speed", color: "text-yellow-500" },
+    { icon: Users, value: 62400, suffix: "+", label: "Verified Users", color: "text-purple-500" },
+    { icon: Diamond, value: 99.9, suffix: "%", label: "Uptime Score", color: "text-blue-500" },
+    { icon: Globe, value: 180, suffix: "+", label: "Global Servers", color: "text-cyan-500" },
+    { icon: Zap, value: 5, suffix: "m", label: "Support Speed", color: "text-yellow-500" },
 ];
 
 function Counter({ value, suffix }) {
     const ref = useRef(null);
-    const inView = useInView(ref, { once: true, margin: "-100px" });
+    const inView = useInView(ref, { once: true, margin: "-20px" });
     const spring = useSpring(0, { mass: 0.8, stiffness: 75, damping: 15 });
     const display = useTransform(spring, (current) => Math.round(current).toLocaleString());
 
