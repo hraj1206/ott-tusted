@@ -10,7 +10,7 @@ export default function AppsManager() {
     const [refresh, setRefresh] = useState(0);
 
     // New App Form
-    const [newApp, setNewApp] = useState({ name: '', description: '', logo_url: '' });
+    const [newApp, setNewApp] = useState({ name: '', description: '', logo_url: '', price: '' });
 
     // New Plan Form
     const [newPlan, setNewPlan] = useState({ name: '', price: '', details: '' });
@@ -40,7 +40,8 @@ export default function AppsManager() {
         await supabase.from('ott_apps').update({
             name: editingApp.name,
             logo_url: editingApp.logo_url,
-            description: editingApp.description
+            description: editingApp.description,
+            price: editingApp.price
         }).eq('id', id);
         setEditingApp(null);
         setRefresh(r => r + 1);
@@ -74,7 +75,7 @@ export default function AppsManager() {
             {/* Add New App */}
             <div className="bg-surface/50 p-6 rounded-xl border border-white/10">
                 <h3 className="text-xl font-bold text-white mb-4">Add New OTT App</h3>
-                <div className="grid gap-4 md:grid-cols-4">
+                <div className="grid gap-4 md:grid-cols-5">
                     <Input
                         placeholder="App Name"
                         value={newApp.name}
@@ -89,6 +90,12 @@ export default function AppsManager() {
                         placeholder="Description (e.g. ID & PASS)"
                         value={newApp.description}
                         onChange={e => setNewApp({ ...newApp, description: e.target.value })}
+                    />
+                    <Input
+                        placeholder="Starting Price"
+                        type="number"
+                        value={newApp.price}
+                        onChange={e => setNewApp({ ...newApp, price: e.target.value })}
                     />
                     <Button onClick={handleCreateApp}>
                         <Plus className="mr-2 h-4 w-4" /> Add App
@@ -105,7 +112,7 @@ export default function AppsManager() {
                             onClick={() => setExpandedApp(expandedApp === app.id ? null : app.id)}
                         >
                             {editingApp?.id === app.id ? (
-                                <div className="flex-1 grid grid-cols-3 gap-2 mr-4" onClick={(e) => e.stopPropagation()}>
+                                <div className="flex-1 grid grid-cols-4 gap-2 mr-4" onClick={(e) => e.stopPropagation()}>
                                     <Input
                                         value={editingApp.name}
                                         onChange={e => setEditingApp({ ...editingApp, name: e.target.value })}
@@ -121,6 +128,13 @@ export default function AppsManager() {
                                         onChange={e => setEditingApp({ ...editingApp, description: e.target.value })}
                                         className="h-8 text-xs"
                                         placeholder="Description"
+                                    />
+                                    <Input
+                                        value={editingApp.price}
+                                        onChange={e => setEditingApp({ ...editingApp, price: e.target.value })}
+                                        className="h-8 text-xs"
+                                        placeholder="Price"
+                                        type="number"
                                     />
                                 </div>
                             ) : (
