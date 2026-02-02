@@ -61,11 +61,11 @@ export default function Reviews() {
                 <motion.div
                     animate={{ x: ["0%", "-50%"] }}
                     transition={{
-                        duration: 30,
+                        duration: 80,
                         repeat: Infinity,
                         ease: "linear",
                     }}
-                    className="flex gap-6 whitespace-nowrap py-4"
+                    className="flex gap-6 whitespace-nowrap py-4 hover:[animation-play-state:paused]"
                 >
                     {/* Render many times to ensure even a single review covers the screen width twice */}
                     {[...reviews, ...reviews, ...reviews, ...reviews, ...reviews, ...reviews, ...reviews, ...reviews].map((review, i) => (
