@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { Users, Diamond, Globe, Zap } from 'lucide-react';
 
 const stats = [
-    { icon: Users, value: 50, suffix: "k+", label: "Verified Users", color: "text-purple-500" },
+    { icon: Users, value: 50000, suffix: "+", label: "Verified Users", color: "text-purple-500" },
     { icon: Diamond, value: 99.9, suffix: "%", label: "Uptime Score", color: "text-blue-500" },
     { icon: Globe, value: 150, suffix: "+", label: "Global Servers", color: "text-cyan-500" },
     { icon: Zap, value: 5, suffix: "m", label: "Support Speed", color: "text-yellow-500" },
