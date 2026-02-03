@@ -60,7 +60,7 @@ create table ott_plans (
 -- ORDERS
 create table orders (
   id uuid default uuid_generate_v4() primary key,
-  user_id uuid references auth.users(id) not null,
+  user_id uuid references profiles(id) not null,
   plan_id uuid references ott_plans(id) not null,
   status text default 'pending' check (status in ('pending', 'accepted', 'rejected')),
   payment_proof_url text,
