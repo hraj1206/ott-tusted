@@ -92,6 +92,7 @@ create policy "User view own orders" on orders for select using (auth.uid() = us
 create policy "Admin view all orders" on orders for select using (exists (select 1 from profiles where id = auth.uid() and role = 'admin'));
 create policy "User create order" on orders for insert with check (auth.uid() = user_id);
 create policy "Admin update order" on orders for update using (exists (select 1 from profiles where id = auth.uid() and role = 'admin'));
+create policy "Admin delete order" on orders for delete using (exists (select 1 from profiles where id = auth.uid() and role = 'admin'));
 
 -- RLS for Payment Config (Public Read, Admin Write)
 alter table payment_config enable row level security;

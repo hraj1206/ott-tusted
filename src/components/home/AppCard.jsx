@@ -60,7 +60,7 @@ export default function AppCard({ app, index }) {
                 {/* Price Section - Moved closer to description */}
                 <div className="mt-4 text-center">
                     <div className="text-[10px] font-bold text-muted uppercase tracking-[0.2em]">
-                        Starting at ₹{app.price || '99'}
+                        {app.startingPrice ? `Starting at ₹${app.startingPrice}` : 'View Plans'}
                     </div>
                 </div>
             </div>

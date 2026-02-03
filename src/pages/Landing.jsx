@@ -57,20 +57,28 @@ export default function Landing() {
         try {
             const { data, error } = await supabase
                 .from('ott_apps')
-                .select('*')
+                .select('*, plans:ott_plans(price)')
                 .eq('active', true)
                 .order('recommended', { ascending: false })
                 .order('created_at', { ascending: true });
 
+            if (error) throw error;
+
             if (!data || data.length === 0) {
                 setApps([
-                    { id: '1', name: 'Netflix', price: 199, logo_url: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg' },
-                    { id: '2', name: 'YouTube', price: 99, logo_url: 'https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg' },
-                    { id: '3', name: 'Disney+', price: 149, logo_url: 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Disney%2B_logo.svg' },
-                    { id: '4', name: 'Prime', price: 99, logo_url: 'https://upload.wikimedia.org/wikipedia/commons/f/f1/Prime_Video.png' },
+                    { id: '1', name: 'Netflix', startingPrice: 199, logo_url: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg' },
+                    { id: '2', name: 'YouTube', startingPrice: 99, logo_url: 'https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg' },
+                    { id: '3', name: 'Disney+', startingPrice: 149, logo_url: 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Disney%2B_logo.svg' },
+                    { id: '4', name: 'Prime', startingPrice: 99, logo_url: 'https://upload.wikimedia.org/wikipedia/commons/f/f1/Prime_Video.png' },
                 ]);
             } else {
-                setApps(data);
+                // Calculate minimum starting price from plans
+                const appsWithPrice = data.map(app => {
+                    const prices = app.plans?.map(p => p.price) || [];
+                    const minPrice = prices.length > 0 ? Math.min(...prices) : null;
+                    return { ...app, startingPrice: minPrice };
+                });
+                setApps(appsWithPrice);
             }
         } catch (error) {
             console.error('Error fetching apps:', error);
