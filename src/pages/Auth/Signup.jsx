@@ -77,7 +77,10 @@ export default function Signup() {
                 } else {
                     const text = await response.text();
                     console.error("Non-JSON error response:", text);
-                    throw new Error('API route not found. Please run using "npx vercel dev" for local testing.');
+                    if (import.meta.env.DEV) {
+                        throw new Error('API route not found. Make sure you are running "npx vercel dev" to start the backend functions.');
+                    }
+                    throw new Error('Connection error. Please check your internet connection or try again later.');
                 }
             }
 
@@ -140,7 +143,10 @@ export default function Signup() {
                     const errData = await response.json();
                     throw new Error(errData.error || 'Failed to resend verification code');
                 } else {
-                    throw new Error('Failed to resend code. Please check your internet or try again later.');
+                    if (import.meta.env.DEV) {
+                        throw new Error('API route not found (Local Dev). Ensure you are running "npx vercel dev".');
+                    }
+                    throw new Error('Failed to send OTP. Please check your internet connection.');
                 }
             }
             alert('A new code has been sent to your email.');

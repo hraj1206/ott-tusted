@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
+import WhatsAppButton from '../WhatsAppButton';
 
 export default function AppLayout() {
     return (
@@ -8,6 +9,7 @@ export default function AppLayout() {
             <main>
                 <Outlet />
             </main>
+            <WhatsAppButton />
         </div>
     );
 }
