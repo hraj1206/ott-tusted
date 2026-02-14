@@ -5,7 +5,7 @@ import { Input } from '../../components/ui/Input';
 import { Save } from 'lucide-react';
 
 export default function PaymentSettings() {
-    const [config, setConfig] = useState({ upi_id: '', whatsapp_number: '', qr_code_url: '' });
+    const [config, setConfig] = useState({ whatsapp_number: '' });
     const [loading, setLoading] = useState(false);
     const [id, setId] = useState(null);
 
@@ -17,9 +17,7 @@ export default function PaymentSettings() {
         const { data } = await supabase.from('payment_config').select('*').maybeSingle();
         if (data) {
             setConfig({
-                upi_id: data.upi_id || '',
-                whatsapp_number: data.whatsapp_number || '',
-                qr_code_url: data.qr_code_url || ''
+                whatsapp_number: data.whatsapp_number || ''
             });
             setId(data.id);
         }
@@ -55,25 +53,6 @@ export default function PaymentSettings() {
                         placeholder="e.g. 919876543210"
                     />
                     <p className="text-xs text-muted mt-1">Used for order notifications.</p>
-                </div>
-
-                <div>
-                    <label className="block text-sm text-muted mb-1">UPI ID</label>
-                    <Input
-                        value={config.upi_id}
-                        onChange={(e) => setConfig({ ...config, upi_id: e.target.value })}
-                        placeholder="username@upi"
-                    />
-                </div>
-
-                <div>
-                    <label className="block text-sm text-muted mb-1">QR Code Image URL</label>
-                    <Input
-                        value={config.qr_code_url}
-                        onChange={(e) => setConfig({ ...config, qr_code_url: e.target.value })}
-                        placeholder="https://..."
-                    />
-                    <p className="text-xs text-muted mt-1">Direct link to QR code image (upload to Supabase Storage manually and paste link here for now, or use external host).</p>
                 </div>
 
                 <div className="pt-4">
