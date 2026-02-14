@@ -180,7 +180,7 @@ export default function Payment() {
                         animate={{ opacity: 1, y: 0 }}
                         className="text-4xl md:text-5xl font-display font-black italic uppercase tracking-tighter"
                     >
-                        Secure <span className="text-primary">Checkout</span>
+                        Trusted Secure <span className="text-primary">Checkout</span>
                     </motion.h1>
                     <motion.p
                         initial={{ opacity: 0 }}
