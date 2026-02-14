@@ -11,10 +11,12 @@ export const ProtectedRoute = ({ adminOnly = false }) => {
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
+    // Temporarily disabled mandatory OTP verification to fix the redirect loop/glitch
+    /*
     if (!isVerified && !adminOnly) {
-        // Option: Redirect to signup where OTP can be entered
         return <Navigate to="/signup" state={{ from: location }} replace />;
     }
+    */
 
     if (adminOnly && !isAdmin) {
         return <Navigate to="/" replace />;

@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "vercel": "vercel dev",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -15,6 +16,7 @@
     "clsx": "^2.1.1",
     "framer-motion": "^12.29.2",
     "lucide-react": "^0.563.0",
+    "razorpay": "^2.9.6",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.13.0",
