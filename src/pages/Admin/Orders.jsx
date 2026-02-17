@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../utils/supabase';
 import { Button } from '../../components/ui/Button';
 import { Loader2, ExternalLink, Check, X } from 'lucide-react';
+import { playNotificationSound } from '../../utils/notificationSound';
 
 export default function Orders() {
     const [orders, setOrders] = useState([]);
@@ -22,15 +23,13 @@ export default function Orders() {
             .channel('orders')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, (payload) => {
                 fetchOrders();
+                playNotificationSound(); // Play sound on new order
                 if (Notification.permission === 'granted') {
                     new Notification("New Order Received!", {
                         body: `Order #${payload.new.id.slice(0, 8)} received. Check Admin Panel.`,
                         icon: '/favicon.ico' // Assuming favicon exists
                     });
                 }
-                // Optional: Play a sound
-                const audio = new Audio('/notification.mp3'); // Try a standard path or omit if no file
-                audio.play().catch(e => console.log('Audio play failed', e)); // Often blocked interaction
             })
             .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders' }, fetchOrders)
             .subscribe();
