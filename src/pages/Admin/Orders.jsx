@@ -13,9 +13,26 @@ export default function Orders() {
 
     useEffect(() => {
         fetchOrders();
+
+        if (Notification.permission !== 'granted') {
+            Notification.requestPermission();
+        }
+
         const subscription = supabase
             .channel('orders')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, fetchOrders)
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, (payload) => {
+                fetchOrders();
+                if (Notification.permission === 'granted') {
+                    new Notification("New Order Received!", {
+                        body: `Order #${payload.new.id.slice(0, 8)} received. Check Admin Panel.`,
+                        icon: '/favicon.ico' // Assuming favicon exists
+                    });
+                }
+                // Optional: Play a sound
+                const audio = new Audio('/notification.mp3'); // Try a standard path or omit if no file
+                audio.play().catch(e => console.log('Audio play failed', e)); // Often blocked interaction
+            })
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders' }, fetchOrders)
             .subscribe();
 
         return () => subscription.unsubscribe();
@@ -99,8 +116,16 @@ export default function Orders() {
                                     {new Date(order.created_at).toLocaleDateString()}
                                 </td>
                                 <td className="px-6 py-4">
-                                    <div className="font-medium text-white">USER ID</div>
-                                    <div className="text-xs text-muted font-mono">{order.user_id.slice(0, 8)}...</div>
+                                    <div className="font-medium text-white">{order.customer_name || 'USER ID'}</div>
+                                    <div className="text-xs text-muted font-mono">
+                                        {order.customer_phone ? (
+                                            <a href={`https://wa.me/${order.customer_phone.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="hover:text-primary transition-colors flex items-center gap-1">
+                                                {order.customer_phone}
+                                            </a>
+                                        ) : (
+                                            order.user_id.slice(0, 8) + '...'
+                                        )}
+                                    </div>
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className="text-white">{order.plan?.app?.name || 'Item'}</div>

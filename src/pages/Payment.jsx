@@ -114,14 +114,30 @@ export default function Payment() {
                         const verification = await verifyRes.json();
                         if (verification.success) {
                             // 4. Create Order in Supabase
-                            const { error: orderError } = await supabase.from('orders').insert({
+                            const orderPayload = {
                                 user_id: user.id,
                                 plan_id: state.plan.id,
                                 status: 'pending',
                                 payment_proof_url: `RAZORPAY_ID:${response.razorpay_payment_id}`,
-                            });
+                                customer_name: formData.fullName,
+                                customer_email: formData.email,
+                                customer_phone: formData.phone,
+                            };
 
-                            if (orderError) throw orderError;
+                            let { error: orderError } = await supabase.from('orders').insert(orderPayload);
+
+                            if (orderError) {
+                                // Fallback: Try without new columns if schema update is missing
+                                console.warn("Order insert failed, retrying with legacy schema...", orderError);
+                                const legacyPayload = {
+                                    user_id: user.id,
+                                    plan_id: state.plan.id,
+                                    status: 'pending',
+                                    payment_proof_url: `RAZORPAY_ID:${response.razorpay_payment_id}`,
+                                };
+                                const { error: legacyError } = await supabase.from('orders').insert(legacyPayload);
+                                if (legacyError) throw legacyError;
+                            }
 
                             // 5. WhatsApp Redirect
                             const message = `*New Razorpay Order*\n\nName: ${formData.fullName}\nApp: ${state.app.name}\nPlan: ${state.plan.name} (Rs. ${state.plan.price})\nEmail: ${formData.email}\nPhone: ${formData.phone}\nPayment ID: ${response.razorpay_payment_id}`;
