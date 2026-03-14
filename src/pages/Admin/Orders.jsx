@@ -112,7 +112,8 @@ export default function Orders() {
                         {orders.map((order) => (
                             <tr key={order.id} className="hover:bg-white/5 transition-colors">
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    {new Date(order.created_at).toLocaleDateString()}
+                                    <div className="text-white font-medium">{new Date(order.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
+                                    <div className="text-xs text-muted">{new Date(order.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</div>
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className="font-medium text-white">{order.customer_name || 'USER ID'}</div>
@@ -127,7 +128,7 @@ export default function Orders() {
                                     </div>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <div className="text-white">{order.plan?.app?.name || 'Item'}</div>
+                                    <div className="text-white">{order.app?.name || order.ott_plans?.ott_apps?.name || 'Item'}</div>
                                     <div className="text-xs text-muted">{order.plan?.name || 'Plan'} - ₹{order.plan?.price || '0'}</div>
                                 </td>
                                 <td className="px-6 py-4">
